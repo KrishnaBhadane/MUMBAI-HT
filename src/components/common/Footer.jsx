@@ -3,58 +3,59 @@ import { Shield, Lock, FileCheck2 } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="bg-white border-t border-brand-border text-xs text-brand-muted mt-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="md:col-span-2 space-y-2">
-            <div className="flex items-center gap-2 text-brand-ink font-display font-bold text-sm">
-              <span className="w-5 h-5 rounded bg-brand-ink text-white flex items-center justify-center text-xs">N</span>
+    <footer className="backdrop-blur-xl bg-black/70 border-t border-white/[0.08] text-xs text-zinc-400 mt-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          <div className="md:col-span-2 space-y-3">
+            <div className="flex items-center gap-2.5 text-white font-display font-bold text-base">
+              <span className="w-6 h-6 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 text-white flex items-center justify-center text-xs font-bold shadow-[0_0_10px_rgba(249,115,22,0.5)]">N</span>
               <span>NIRNAY Underwriting Intelligence</span>
             </div>
-            <p className="text-brand-muted leading-relaxed max-w-md">
+            <p className="text-zinc-400 leading-relaxed max-w-md text-xs">
               Digitally automated mortgage underwriting engine built for Hero Housing Finance’s Housing Fintech Challenge.
               Calculates FOIR, LTV, credit risk probability, and verifies documents with explainable credit governance.
             </p>
+
           </div>
 
           <div>
-            <h4 className="font-semibold text-brand-ink uppercase tracking-wider text-[11px] mb-2">Supported Products</h4>
-            <ul className="space-y-1.5">
-              <li>Home Loans (Purchase & Construction)</li>
-              <li>Loan Against Property (LAP)</li>
-              <li>Refinance & Balance Transfer</li>
+            <h4 className="font-semibold text-white uppercase tracking-wider text-[11px] mb-3">Supported Products</h4>
+            <ul className="space-y-2 text-zinc-400">
+              <li className="hover:text-orange-400 transition-colors">Home Loans (Purchase & Construction)</li>
+              <li className="hover:text-orange-400 transition-colors">Loan Against Property (LAP)</li>
+              <li className="hover:text-orange-400 transition-colors">Refinance & Balance Transfer</li>
+              <li className="hover:text-orange-400 transition-colors">Top-up Mortgage Lines</li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-semibold text-brand-ink uppercase tracking-wider text-[11px] mb-2">Integrity & Standards</h4>
-            <div className="space-y-1.5 text-[11px]">
-              <div className="flex items-center gap-1.5 text-brand-ink">
-                <Shield className="w-3.5 h-3.5 text-brand-blue" />
-                <span>NHB & RBI Direction Compliance</span>
+            <h4 className="font-semibold text-white uppercase tracking-wider text-[11px] mb-3">Regulatory & Security</h4>
+            <div className="space-y-2.5">
+              <div className="flex items-start gap-2 glass-card p-2.5 rounded-xl border border-white/[0.06]">
+                <Shield className="w-4 h-4 text-orange-400 shrink-0 mt-0.5" />
+                <span className="text-[11px] leading-tight text-zinc-300">NHB Master Directions 2021 Compliant</span>
               </div>
-              <div className="flex items-center gap-1.5 text-brand-ink">
-                <FileCheck2 className="w-3.5 h-3.5 text-brand-success" />
-                <span>Fair Practices Code Aligned</span>
-              </div>
-              <div className="flex items-center gap-1.5 text-brand-ink">
-                <Lock className="w-3.5 h-3.5 text-slate-600" />
-                <span>Synthetic & Masked KYC Data</span>
+              <div className="flex items-start gap-2 glass-card p-2.5 rounded-xl border border-white/[0.06]">
+                <Lock className="w-4 h-4 text-orange-400 shrink-0 mt-0.5" />
+                <span className="text-[11px] leading-tight text-zinc-300">DPDP Act 2023 Digital Consent Enforced</span>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="pt-6 border-t border-brand-border flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px]">
+        <div className="pt-6 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-zinc-500">
           <div>
-            © 2026 NIRNAY — Hero Housing Finance Housing Fintech Challenge Prototype.
+            &copy; {new Date().getFullYear()} Hero Housing Finance Limited &bull; NIRNAY Automated Mortgage Engine. All rights reserved.
           </div>
-          <div className="p-2 bg-brand-bg rounded border border-brand-border text-slate-500 max-w-xl text-center sm:text-right">
-            <strong>Demonstration Notice:</strong> All underwriting outputs, risk calculations, and document verifications are powered by realistic simulation data for prototype evaluation. Not a legally binding financial sanction.
+          <div className="flex items-center gap-4 text-zinc-400">
+            <span className="hover:text-orange-400 transition-colors cursor-pointer">Credit Policy Governance</span>
+            <span>&bull;</span>
+            <span className="hover:text-orange-400 transition-colors cursor-pointer">Statutory Ratios</span>
+            <span>&bull;</span>
+            <span className="hover:text-orange-400 transition-colors cursor-pointer">Audit Logs</span>
           </div>
         </div>
       </div>
     </footer>
   );
 }
-

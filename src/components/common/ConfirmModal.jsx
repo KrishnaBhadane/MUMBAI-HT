@@ -9,7 +9,7 @@ export default function ConfirmModal({ isOpen, onClose, onConfirm, title, messag
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg border border-brand-border shadow-xl max-w-md w-full overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div className="glass-card rounded-2xl border border-white/[0.08] shadow-xl max-w-md w-full overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         <div className="p-5">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
@@ -19,8 +19,8 @@ export default function ConfirmModal({ isOpen, onClose, onConfirm, title, messag
                 {isApprove ? <CheckCircle2 className="w-5 h-5" /> : isReject ? <XCircle className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
               </div>
               <div>
-                <h3 className="font-display font-bold text-base text-brand-ink">{title}</h3>
-                <p className="text-xs text-brand-muted mt-0.5">Underwriting Action Confirmation</p>
+                <h3 className="font-display font-bold text-base text-white">{title}</h3>
+                <p className="text-xs text-zinc-400 mt-0.5">Underwriting Action Confirmation</p>
               </div>
             </div>
             <button onClick={onClose} className="text-slate-400 hover:text-slate-600 p-1">
@@ -28,15 +28,15 @@ export default function ConfirmModal({ isOpen, onClose, onConfirm, title, messag
             </button>
           </div>
 
-          <div className="mt-4 text-xs text-brand-muted leading-relaxed">
+          <div className="mt-4 text-xs text-zinc-400 leading-relaxed">
             {message}
           </div>
 
-          <div className="mt-6 flex items-center justify-end gap-2.5 pt-4 border-t border-brand-border">
+          <div className="mt-6 flex items-center justify-end gap-2.5 pt-4 border-t border-white/[0.08]">
             <button
               type="button"
               onClick={onClose}
-              className="px-3.5 py-1.5 rounded text-xs font-medium text-brand-muted hover:text-brand-ink hover:bg-slate-100 transition-colors"
+              className="px-3.5 py-1.5 rounded text-xs font-medium text-zinc-400 hover:text-white hover:bg-white/[0.05] transition-colors"
             >
               Cancel
             </button>

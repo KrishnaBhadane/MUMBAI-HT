@@ -19,26 +19,26 @@ export default function EligibilityCalculatorModal({ isOpen, onClose }) {
   const maxEligibleLoan = Math.round(maxAffordableEMI * 105);
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg border border-brand-border shadow-2xl max-w-2xl w-full overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+      <div className="glass-card rounded-3xl border border-white/[0.12] shadow-[0_25px_60px_rgba(0,0,0,0.8)] max-w-2xl w-full overflow-hidden animate-in fade-in zoom-in-95 duration-150 text-white">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-brand-border flex items-center justify-between bg-slate-50">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded bg-brand-blue-light text-brand-blue flex items-center justify-center">
+        <div className="px-6 py-5 border-b border-white/[0.08] flex items-center justify-between bg-white/[0.02]">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 text-white flex items-center justify-center shadow-[0_0_12px_rgba(249,115,22,0.4)]">
               <Calculator className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="font-display font-bold text-base text-brand-ink">
-                Mortgage Eligibility & EMI Estimator
+              <h3 className="font-display font-bold text-base text-white">
+                Mortgage Eligibility &amp; EMI Estimator
               </h3>
-              <p className="text-xs text-brand-muted">
-                Modeled on Hero Housing Finance lending benchmarks & NHB guidelines
+              <p className="text-xs text-zinc-400">
+                Modeled on Hero Housing Finance lending benchmarks &amp; NHB guidelines
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1 text-slate-400 hover:text-slate-600 rounded transition-colors"
+            className="p-1.5 text-zinc-400 hover:text-white rounded-xl hover:bg-white/[0.08] transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -47,154 +47,151 @@ export default function EligibilityCalculatorModal({ isOpen, onClose }) {
         {/* Content */}
         <div className="p-6 space-y-6 text-xs">
           {/* Loan Product Toggle */}
-          <div className="flex rounded border border-brand-border p-1 bg-brand-bg">
+          <div className="flex rounded-2xl bg-white/[0.04] p-1 border border-white/[0.08]">
             <button
               type="button"
-              onClick={() => {
-                setLoanType('home_loan');
-                if (tenureYears > 30) setTenureYears(20);
-              }}
-              className={`flex-1 py-1.5 rounded text-xs font-semibold transition-all ${
+              onClick={() => setLoanType('home_loan')}
+              className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
                 loanType === 'home_loan'
-                  ? 'bg-white text-brand-blue shadow-2xs font-bold'
-                  : 'text-brand-muted hover:text-brand-ink'
+                  ? 'btn-orange shadow-[0_0_12px_rgba(249,115,22,0.3)]'
+                  : 'text-zinc-400 hover:text-white'
               }`}
             >
-              Home Loan (8.50% p.a. • Up to 30 Yrs)
+              Home Loan (8.50% p.a.)
             </button>
             <button
               type="button"
-              onClick={() => {
-                setLoanType('lap');
-                if (tenureYears > 15) setTenureYears(15);
-              }}
-              className={`flex-1 py-1.5 rounded text-xs font-semibold transition-all ${
+              onClick={() => setLoanType('lap')}
+              className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
                 loanType === 'lap'
-                  ? 'bg-white text-amber-800 shadow-2xs font-bold'
-                  : 'text-brand-muted hover:text-brand-ink'
+                  ? 'btn-orange shadow-[0_0_12px_rgba(249,115,22,0.3)]'
+                  : 'text-zinc-400 hover:text-white'
               }`}
             >
-              Loan Against Property (10.25% p.a. • Up to 15 Yrs)
+              Loan Against Property (10.25% p.a.)
             </button>
           </div>
 
-          {/* Sliders Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <div className="flex justify-between items-center mb-1">
-                <span className="font-medium text-brand-ink">Net Monthly Income (₹)</span>
-                <span className="font-bold text-brand-blue">{formatINR(monthlyIncome)}</span>
+              <label className="block text-zinc-300 font-semibold mb-1">
+                Net Monthly In-Hand Income
+              </label>
+              <div className="relative">
+                <span className="absolute left-3 top-2.5 text-zinc-400 font-medium">₹</span>
+                <input
+                  type="number"
+                  value={monthlyIncome}
+                  onChange={(e) => setMonthlyIncome(Number(e.target.value) || 0)}
+                  className="glass-input w-full pl-8 pr-3 py-2.5 rounded-xl text-white font-medium"
+                  step="5000"
+                />
               </div>
-              <input
-                type="range"
-                min={30000}
-                max={500000}
-                step={5000}
-                value={monthlyIncome}
-                onChange={(e) => setMonthlyIncome(Number(e.target.value))}
-                className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-brand-blue"
-              />
-              <span className="text-[10px] text-brand-muted">Min ₹30,000 — Max ₹5,00,000</span>
             </div>
 
             <div>
-              <div className="flex justify-between items-center mb-1">
-                <span className="font-medium text-brand-ink">Existing Monthly EMIs (₹)</span>
-                <span className="font-bold text-brand-ink">{formatINR(existingEMIs)}</span>
+              <label className="block text-zinc-300 font-semibold mb-1">
+                Existing Monthly EMI Obligations
+              </label>
+              <div className="relative">
+                <span className="absolute left-3 top-2.5 text-zinc-400 font-medium">₹</span>
+                <input
+                  type="number"
+                  value={existingEMIs}
+                  onChange={(e) => setExistingEMIs(Number(e.target.value) || 0)}
+                  className="glass-input w-full pl-8 pr-3 py-2.5 rounded-xl text-white font-medium"
+                  step="1000"
+                />
               </div>
-              <input
-                type="range"
-                min={0}
-                max={200000}
-                step={2500}
-                value={existingEMIs}
-                onChange={(e) => setExistingEMIs(Number(e.target.value))}
-                className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-brand-blue"
-              />
-              <span className="text-[10px] text-brand-muted">Total running loan installments</span>
             </div>
 
             <div>
-              <div className="flex justify-between items-center mb-1">
-                <span className="font-medium text-brand-ink">Desired Loan Amount (₹)</span>
-                <span className="font-bold text-brand-blue">{formatINR(desiredLoan)}</span>
+              <label className="block text-zinc-300 font-semibold mb-1">
+                Desired Loan Amount
+              </label>
+              <div className="relative">
+                <span className="absolute left-3 top-2.5 text-zinc-400 font-medium">₹</span>
+                <input
+                  type="number"
+                  value={desiredLoan}
+                  onChange={(e) => setDesiredLoan(Number(e.target.value) || 0)}
+                  className="glass-input w-full pl-8 pr-3 py-2.5 rounded-xl text-white font-medium"
+                  step="100000"
+                />
               </div>
-              <input
-                type="range"
-                min={500000}
-                max={15000000}
-                step={100000}
-                value={desiredLoan}
-                onChange={(e) => setDesiredLoan(Number(e.target.value))}
-                className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-brand-blue"
-              />
-              <span className="text-[10px] text-brand-muted">Min ₹5,00,000 — Max ₹1.5 Cr</span>
             </div>
 
             <div>
-              <div className="flex justify-between items-center mb-1">
-                <span className="font-medium text-brand-ink">Loan Tenure</span>
-                <span className="font-bold text-brand-ink">{tenureYears} Years ({tenureMonths} Mos)</span>
-              </div>
+              <label className="block text-zinc-300 font-semibold mb-1">
+                Tenure: <span className="text-orange-400 font-bold">{tenureYears} Years</span> ({tenureMonths} Months)
+              </label>
               <input
                 type="range"
-                min={5}
+                min="5"
                 max={loanType === 'home_loan' ? 30 : 15}
-                step={1}
                 value={tenureYears}
                 onChange={(e) => setTenureYears(Number(e.target.value))}
-                className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-brand-blue"
+                className="w-full mt-3 accent-orange-500 cursor-pointer"
               />
-              <span className="text-[10px] text-brand-muted">Max {loanType === 'home_loan' ? '30 Yrs for Home Loan' : '15 Yrs for LAP'}</span>
             </div>
           </div>
 
-          {/* Real-time Eligibility Result Card (Tremor-inspired) */}
-          <div className="p-4 rounded border border-brand-border bg-brand-bg/70 space-y-4">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-              <div className="bg-white p-3 rounded border border-brand-border">
-                <span className="text-[11px] text-brand-muted block">Estimated Monthly EMI</span>
-                <strong className="text-sm font-bold text-brand-ink block mt-0.5">{formatINR(estimatedEMI)}</strong>
+          {/* Results Display */}
+          <div className="glass-panel p-5 rounded-2xl border border-white/[0.08] space-y-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
+              <div>
+                <span className="text-zinc-400 block text-[11px]">Monthly EMI</span>
+                <span className="font-display font-bold text-xl text-white block mt-0.5">
+                  {formatINR(estimatedEMI)}
+                </span>
               </div>
-              <div className="bg-white p-3 rounded border border-brand-border">
-                <span className="text-[11px] text-brand-muted block">Calculated FOIR</span>
-                <strong className={`text-sm font-bold block mt-0.5 ${calculatedFOIR <= 55 ? 'text-emerald-700' : 'text-amber-700'}`}>
+              <div>
+                <span className="text-zinc-400 block text-[11px]">Resulting FOIR</span>
+                <span className={`font-display font-bold text-xl block mt-0.5 ${
+                  calculatedFOIR <= 55 ? 'text-emerald-400' : 'text-red-400'
+                }`}>
                   {calculatedFOIR}%
-                </strong>
+                </span>
+                <span className="text-[10px] text-zinc-500">Cap: 55%</span>
               </div>
-              <div className="bg-white p-3 rounded border border-brand-border sm:col-span-2">
-                <span className="text-[11px] text-brand-muted block">Estimated Maximum Eligible Loan</span>
-                <strong className="text-sm font-bold text-brand-blue block mt-0.5">{formatINR(maxEligibleLoan)}</strong>
+              <div className="col-span-2 sm:col-span-1">
+                <span className="text-zinc-400 block text-[11px]">Max Loan Capacity</span>
+                <span className="font-display font-bold text-xl text-orange-400 block mt-0.5">
+                  {formatINR(maxEligibleLoan)}
+                </span>
               </div>
             </div>
 
-            <div className="flex items-center justify-between text-[11px] pt-2 border-t border-brand-border">
-              <div className="flex items-center gap-1.5 text-brand-muted">
-                <ShieldCheck className="w-3.5 h-3.5 text-brand-success" />
-                <span>Based on maximum 55% FOIR statutory affordability cap.</span>
-              </div>
-              <span className={calculatedFOIR <= 55 ? 'text-emerald-700 font-bold' : 'text-amber-700 font-bold'}>
-                {calculatedFOIR <= 55 ? 'Eligible for Quick Underwriting' : 'High Obligation — May require higher tenure'}
+            <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between text-[11px]">
+              <span className="text-zinc-400 flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <span>Statutory 55% FOIR Buffer Enforced</span>
+              </span>
+              <span className="font-mono text-zinc-400">
+                Interest: {interestRate}% p.a.
               </span>
             </div>
           </div>
         </div>
 
-        {/* Footer Actions */}
-        <div className="px-6 py-4 bg-slate-50 border-t border-brand-border flex items-center justify-between">
-          <span className="text-[11px] text-brand-muted">
-            Indicative calculations only. Final sanction subject to credit assessment.
-          </span>
+        {/* Footer */}
+        <div className="px-6 py-4 border-t border-white/[0.08] flex items-center justify-end gap-3 bg-white/[0.02]">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-1.5 rounded text-xs font-semibold bg-brand-blue text-white hover:bg-brand-blue-hover transition-colors shadow-2xs"
+            className="px-4 py-2 rounded-xl text-xs font-semibold text-zinc-400 hover:text-white transition-colors"
           >
-            Apply with These Terms
+            Close
           </button>
+          <a
+            href="/customer/apply"
+            className="btn-orange inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-xs font-bold"
+          >
+            <span>Proceed to Apply</span>
+            <ArrowRight className="w-3.5 h-3.5 text-white" />
+          </a>
         </div>
       </div>
     </div>
   );
 }
-

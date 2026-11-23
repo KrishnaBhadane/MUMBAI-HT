@@ -2,7 +2,7 @@
 
 **System:** NIRNAY Digital Mortgage Underwriting Platform  
 **Target Organization:** Hero Housing Finance Limited (HHFL)  
-**Target Environment:** Supabase Cloud (`https://pavvyoistzfhxpdagmpz.supabase.co`)  
+**Target Environment:** Supabase Cloud (`https://[PROJECT_ID].supabase.co`)  
 **Audit Scope:** Database Migrations 001–009 (`supabase/migrations/all_migrations.sql`), Frontend Integration, RLS Policies, Storage Security, Underwriting Boundaries  
 **Audit Date:** 2026-11-13  
 **Status:** Audit Completed — Actionable Findings Documented  

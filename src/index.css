@@ -4,28 +4,176 @@
 
 @layer base {
   body {
-    @apply bg-brand-bg text-brand-ink font-sans;
+    background-color: #050507;
+    color: #f3f4f6;
+    font-family: 'DM Sans', sans-serif;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    min-height: 100vh;
+    overflow-x: hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display text-brand-ink tracking-tight;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+    font-weight: 700;
   }
 }
 
-/* Custom scrollbars for data tables and panels */
+/* GLOBAL GLASSMORPHISM ENFORCEMENT - Eliminates All Opaque White Backgrounds */
+.bg-white {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #f3f4f6 !important;
+}
+
+.bg-slate-50, .bg-slate-100 {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #f3f4f6 !important;
+}
+
+.bg-brand-bg {
+  background-color: transparent !important;
+}
+
+.bg-brand-surface {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.text-brand-ink {
+  color: #ffffff !important;
+}
+
+.text-slate-700, .text-slate-800, .text-slate-900 {
+  color: #f3f4f6 !important;
+}
+
+.text-brand-muted, .text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+.border-brand-border, .border-brand-borderSubtle {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Orange Theme Button Enforcements */
+.bg-brand-blue {
+  background: linear-gradient(135deg, #ff7a00 0%, #ea580c 50%, #c2410c 100%) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 0 20px rgba(249, 115, 22, 0.45) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+.bg-brand-blue:hover, .hover\:bg-brand-blue-hover:hover {
+  background: linear-gradient(135deg, #ff8a1a 0%, #f97316 50%, #ea580c 100%) !important;
+  box-shadow: 0 0 30px rgba(249, 115, 22, 0.7) !important;
+  filter: brightness(1.12) !important;
+}
+.text-brand-blue {
+  color: #ff7a00 !important;
+}
+.border-brand-blue {
+  border-color: #ff7a00 !important;
+}
+.ring-brand-blue {
+  --tw-ring-color: #ff7a00 !important;
+}
+
+/* Glassmorphism custom design classes */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.03) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45), inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+}
+
+.glass-card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.09) !important;
+  box-shadow: 0 12px 36px 0 rgba(0, 0, 0, 0.55), inset 0 1px 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.glass-card-interactive {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-card-interactive:hover {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%) !important;
+  border-color: rgba(249, 115, 22, 0.4) !important;
+  box-shadow: 0 16px 48px 0 rgba(0, 0, 0, 0.65), 0 0 25px 0 rgba(249, 115, 22, 0.15), inset 0 1px 1px 0 rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.glass-pill {
+  background: rgba(255, 255, 255, 0.06) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+}
+
+.glass-input, input:not([type="checkbox"]):not([type="radio"]), select, textarea {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #ffffff !important;
+  border-radius: 0.75rem;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: rgba(249, 115, 22, 0.6) !important;
+  box-shadow: 0 0 15px rgba(249, 115, 22, 0.25) !important;
+  outline: none !important;
+}
+
+select option {
+  background-color: #121217 !important;
+  color: #ffffff !important;
+}
+
+/* Orange Buttons with Bold White Text */
+.btn-orange {
+  background: linear-gradient(135deg, #ff7a00 0%, #ea580c 50%, #c2410c 100%) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  box-shadow: 0 0 20px rgba(249, 115, 22, 0.45) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  transition: all 0.2s ease;
+}
+
+.btn-orange:hover {
+  box-shadow: 0 0 32px rgba(249, 115, 22, 0.7) !important;
+  filter: brightness(1.12) !important;
+  transform: translateY(-1px);
+}
+
+.btn-orange:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+/* Custom dark frosted scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #F1F4F8;
+  background: #09090c;
 }
 ::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
-  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94A3B8;
+  background: #f97316;
 }
-

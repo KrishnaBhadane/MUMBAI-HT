@@ -3,36 +3,41 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
       colors: {
+        primary: {
+          DEFAULT: '#ff7a00',
+          foreground: '#ffffff',
+        },
         brand: {
-          bg: '#F7F8FA',
-          surface: '#FFFFFF',
-          ink: '#172333',
-          muted: '#687586',
+          bg: '#050507',
+          surface: '#0f0f14',
+          ink: '#F4F4F6',
+          muted: '#94A3B8',
           blue: {
-            DEFAULT: '#2457A7',
-            hover: '#1B4588',
-            light: '#EAF1FA',
+            DEFAULT: '#ff7a00',
+            hover: '#ea580c',
+            light: '#2a1a0c',
           },
-          border: '#E2E7ED',
-          borderSubtle: '#EEF2F6',
+          border: 'rgba(255, 255, 255, 0.08)',
+          borderSubtle: 'rgba(255, 255, 255, 0.05)',
           success: {
-            DEFAULT: '#237A57',
-            light: '#EBF5F0',
-            border: '#BFE3D3',
+            DEFAULT: '#10B981',
+            light: 'rgba(16, 185, 129, 0.1)',
+            border: 'rgba(16, 185, 129, 0.3)',
           },
           warning: {
-            DEFAULT: '#A56B18',
-            light: '#FEF7EC',
-            border: '#F9DFB8',
+            DEFAULT: '#F59E0B',
+            light: 'rgba(245, 158, 11, 0.1)',
+            border: 'rgba(245, 158, 11, 0.3)',
           },
           error: {
-            DEFAULT: '#B43B3B',
-            light: '#FDF2F2',
-            border: '#F6CACA',
+            DEFAULT: '#EF4444',
+            light: 'rgba(239, 68, 68, 0.1)',
+            border: 'rgba(239, 68, 68, 0.3)',
           },
         },
       },
@@ -44,4 +49,3 @@ export default {
   },
   plugins: [],
 }
-

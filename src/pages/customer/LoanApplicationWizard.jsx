@@ -135,18 +135,22 @@ export default function LoanApplicationWizard() {
     return true;
   };
 
-  const handleNext = async () => {
+  const handleNext = () => {
     if (validateStep(currentStep)) {
-      if (currentUser?.id && isLiveConnected) {
-        try {
-          const saved = await saveApplicationDraft(currentUser.id, formData, draftAppId);
-          if (saved?.id) setDraftAppId(saved.id);
-        } catch (err) {
-          console.warn('Draft auto-save note:', err.message);
-        }
-      }
+      // Advance step immediately for zero latency (instant UI transition)
       setCurrentStep(prev => Math.min(prev + 1, STEPS.length));
       window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Persist draft in the background asynchronously without blocking the user
+      if (currentUser?.id && isLiveConnected) {
+        saveApplicationDraft(currentUser.id, formData, draftAppId)
+          .then(saved => {
+            if (saved?.id) setDraftAppId(saved.id);
+          })
+          .catch(err => {
+            console.warn('Draft auto-save note:', err.message);
+          });
+      }
     }
   };
 
@@ -341,27 +345,27 @@ export default function LoanApplicationWizard() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Header */}
-      <div className="border-b border-brand-border pb-4">
-        <span className="text-xs font-semibold text-brand-blue uppercase tracking-wider">
+      <div className="border-b border-white/[0.08] pb-4">
+        <span className="text-xs font-semibold text-orange-400 uppercase tracking-wider">
           New Loan Origination
         </span>
-        <h1 className="font-display font-bold text-2xl text-brand-ink mt-0.5">
+        <h1 className="font-display font-bold text-2xl text-white mt-0.5">
           Digital Mortgage Application
         </h1>
-        <p className="text-xs text-brand-muted mt-1">
+        <p className="text-xs text-zinc-400 mt-1">
           Complete the guided intake to generate your preliminary eligibility and document underwriting dossier.
         </p>
       </div>
 
       {/* Stepper Progress Bar */}
-      <div className="bg-white border border-brand-border rounded p-4">
-        <div className="flex items-center justify-between text-xs font-medium text-brand-muted mb-3">
-          <span>Step {currentStep} of {STEPS.length}: <strong className="text-brand-ink">{STEPS[currentStep - 1].name}</strong></span>
+      <div className="glass-card rounded-2xl border border-white/[0.08] p-4 shadow-xl">
+        <div className="flex items-center justify-between text-xs font-medium text-zinc-400 mb-3">
+          <span>Step {currentStep} of {STEPS.length}: <strong className="text-white">{STEPS[currentStep - 1].name}</strong></span>
           <span>{Math.round((currentStep / STEPS.length) * 100)}% Completed</span>
         </div>
-        <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+        <div className="w-full glass-input bg-white/[0.04] text-white border-white/[0.12]/[0.08] h-2 rounded-full overflow-hidden">
           <div
-            className="bg-brand-blue h-full transition-all duration-300"
+            className="bg-gradient-to-r from-orange-500 via-orange-600 to-amber-500 h-full shadow-[0_0_12px_rgba(249,115,22,0.5)] transition-all duration-300"
             style={{ width: `${(currentStep / STEPS.length) * 100}%` }}
           />
         </div>
@@ -376,21 +380,21 @@ export default function LoanApplicationWizard() {
       )}
 
       {/* Step Contents */}
-      <div className="bg-white border border-brand-border rounded p-6 sm:p-8">
+      <div className="glass-card rounded-3xl border border-white/[0.08] p-6 sm:p-8 shadow-2xl backdrop-blur-2xl">
         {/* Step 1: Loan Selection */}
         {currentStep === 1 && (
           <div className="space-y-6">
             <div>
-              <h2 className="font-display font-bold text-lg text-brand-ink">Select Loan Product</h2>
-              <p className="text-xs text-brand-muted mt-0.5">Choose the mortgage type best matched to your requirement.</p>
+              <h2 className="font-display font-bold text-lg text-white">Select Loan Product</h2>
+              <p className="text-xs text-zinc-400 mt-0.5">Choose the mortgage type best matched to your requirement.</p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <label
                 className={`p-4 rounded border text-left cursor-pointer transition-all ${
                   formData.loanType === 'home_loan'
-                    ? 'border-brand-blue bg-blue-50/50 ring-1 ring-brand-blue'
-                    : 'border-brand-border hover:border-slate-300'
+                    ? 'border-orange-500 bg-orange-500/15 ring-1 ring-orange-500 text-white shadow-[0_0_15px_rgba(249,115,22,0.2)]'
+                    : 'border-white/[0.1] glass-input bg-white/[0.04] text-white border-white/[0.12]/[0.03] hover:glass-input bg-white/[0.04] text-white border-white/[0.12]/[0.06] text-zinc-300'
                 }`}
               >
                 <input
@@ -402,13 +406,13 @@ export default function LoanApplicationWizard() {
                   className="sr-only"
                 />
                 <div className="flex items-center justify-between">
-                  <span className="font-display font-bold text-sm text-brand-ink">Home Loan</span>
-                  <span className="text-[10px] bg-blue-100 text-brand-blue px-2 py-0.5 rounded font-medium">LTV ≤ 80%</span>
+                  <span className="font-display font-bold text-sm text-white">Home Loan</span>
+                  <span className="text-[10px] bg-orange-500/20 text-orange-400 border border-orange-500/30 px-2 py-0.5 rounded font-medium">LTV ≤ 80%</span>
                 </div>
-                <p className="text-xs text-brand-muted mt-2 leading-relaxed">
+                <p className="text-xs text-zinc-400 mt-2 leading-relaxed">
                   For purchasing a ready-built apartment, independent house, or constructing on a residential plot.
                 </p>
-                <div className="mt-3 text-[11px] text-brand-ink font-semibold">
+                <div className="mt-3 text-[11px] text-white font-semibold">
                   Benchmark Rate: 8.50% p.a. • Tenure up to 30 Yrs
                 </div>
               </label>
@@ -416,8 +420,8 @@ export default function LoanApplicationWizard() {
               <label
                 className={`p-4 rounded border text-left cursor-pointer transition-all ${
                   formData.loanType === 'lap'
-                    ? 'border-brand-blue bg-blue-50/50 ring-1 ring-brand-blue'
-                    : 'border-brand-border hover:border-slate-300'
+                    ? 'border-orange-500 bg-orange-500/15 ring-1 ring-orange-500 text-white shadow-[0_0_15px_rgba(249,115,22,0.2)]'
+                    : 'border-white/[0.1] glass-input bg-white/[0.04] text-white border-white/[0.12]/[0.03] hover:glass-input bg-white/[0.04] text-white border-white/[0.12]/[0.06] text-zinc-300'
                 }`}
               >
                 <input
@@ -429,21 +433,21 @@ export default function LoanApplicationWizard() {
                   className="sr-only"
                 />
                 <div className="flex items-center justify-between">
-                  <span className="font-display font-bold text-sm text-brand-ink">Loan Against Property (LAP)</span>
-                  <span className="text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-medium">LTV ≤ 60%</span>
+                  <span className="font-display font-bold text-sm text-white">Loan Against Property (LAP)</span>
+                  <span className="text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded font-medium">LTV ≤ 60%</span>
                 </div>
-                <p className="text-xs text-brand-muted mt-2 leading-relaxed">
+                <p className="text-xs text-zinc-400 mt-2 leading-relaxed">
                   Mortgage an existing self-owned residential or commercial property to fund business or personal needs.
                 </p>
-                <div className="mt-3 text-[11px] text-brand-ink font-semibold">
+                <div className="mt-3 text-[11px] text-white font-semibold">
                   Benchmark Rate: 10.25% p.a. • Tenure up to 15 Yrs
                 </div>
               </label>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-brand-border">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-white/[0.08]">
               <div>
-                <label className="block text-xs font-medium text-brand-ink mb-1">
+                <label className="block text-xs font-medium text-white mb-1">
                   Requested Loan Amount (₹) *
                 </label>
                 <input
@@ -451,21 +455,21 @@ export default function LoanApplicationWizard() {
                   step="50000"
                   value={formData.loanAmountRequested}
                   onChange={(e) => handleInputChange('loanAmountRequested', Number(e.target.value))}
-                  className="w-full text-xs px-3 py-2 border border-brand-border rounded focus:outline-hidden focus:ring-1 focus:ring-brand-blue"
+                  className="w-full text-xs px-3 py-2 border border-white/[0.08] rounded focus:outline-hidden focus:ring-1 focus:ring-brand-blue"
                 />
-                <span className="text-[11px] text-brand-muted mt-1 block">
+                <span className="text-[11px] text-zinc-400 mt-1 block">
                   Amount in words: {formatINR(formData.loanAmountRequested)}
                 </span>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-brand-ink mb-1">
+                <label className="block text-xs font-medium text-white mb-1">
                   Requested Tenure (Months) *
                 </label>
                 <select
                   value={formData.tenureMonthsRequested}
                   onChange={(e) => handleInputChange('tenureMonthsRequested', Number(e.target.value))}
-                  className="w-full text-xs px-3 py-2 border border-brand-border rounded focus:outline-hidden focus:ring-1 focus:ring-brand-blue bg-white"
+                  className="w-full text-xs px-3 py-2 border border-white/[0.08] rounded focus:outline-hidden focus:ring-1 focus:ring-brand-blue glass-input bg-white/[0.04] text-white border-white/[0.12]"
                 >
                   <option value={120}>10 Years (120 Months)</option>
                   <option value={180}>15 Years (180 Months)</option>
@@ -482,49 +486,49 @@ export default function LoanApplicationWizard() {
         {currentStep === 2 && (
           <div className="space-y-4">
             <div>
-              <h2 className="font-display font-bold text-lg text-brand-ink">Personal & Demographic Details</h2>
-              <p className="text-xs text-brand-muted mt-0.5">Statutory identity parameters used for KYC and bureau checks.</p>
+              <h2 className="font-display font-bold text-lg text-white">Personal & Demographic Details</h2>
+              <p className="text-xs text-zinc-400 mt-0.5">Statutory identity parameters used for KYC and bureau checks.</p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-brand-ink mb-1">Full Legal Name (as per PAN) *</label>
+                <label className="block text-xs font-medium text-white mb-1">Full Legal Name (as per PAN) *</label>
                 <input
                   type="text"
                   value={formData.applicantName}
                   onChange={(e) => handleInputChange('applicantName', e.target.value)}
-                  className="w-full text-xs px-3 py-2 border border-brand-border rounded focus:ring-1 focus:ring-brand-blue"
+                  className="w-full text-xs px-3 py-2 border border-white/[0.08] rounded focus:ring-1 focus:ring-brand-blue"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-brand-ink mb-1">Permanent Account Number (PAN) *</label>
+                <label className="block text-xs font-medium text-white mb-1">Permanent Account Number (PAN) *</label>
                 <input
                   type="text"
                   maxLength={10}
                   value={formData.panNumber}
                   onChange={(e) => handleInputChange('panNumber', e.target.value.toUpperCase())}
                   placeholder="e.g. ABCDE1234F"
-                  className="w-full text-xs px-3 py-2 border border-brand-border rounded focus:ring-1 focus:ring-brand-blue uppercase font-mono"
+                  className="w-full text-xs px-3 py-2 border border-white/[0.08] rounded focus:ring-1 focus:ring-brand-blue uppercase font-mono"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-brand-ink mb-1">Date of Birth *</label>
+                <label className="block text-xs font-medium text-white mb-1">Date of Birth *</label>
                 <input
                   type="date"
                   value={formData.dob}
                   onChange={(e) => handleInputChange('dob', e.target.value)}
-                  className="w-full text-xs px-3 py-2 border border-brand-border rounded focus:ring-1 focus:ring-brand-blue"
+                  className="w-full text-xs px-3 py-2 border border-white/[0.08] rounded focus:ring-1 focus:ring-brand-blue"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-brand-ink mb-1">Gender *</label>
+                <label className="block text-xs font-medium text-white mb-1">Gender *</label>
                 <select
                   value={formData.gender}
                   onChange={(e) => handleInputChange('gender', e.target.value)}
-                  className="w-full text-xs px-3 py-2 border border-brand-border rounded bg-white"
+                  className="w-full text-xs px-3 py-2 border border-white/[0.08] rounded glass-input bg-white/[0.04] text-white border-white/[0.12]"
                 >
                   <option value="Female">Female</option>
                   <option value="Male">Male</option>
@@ -533,32 +537,32 @@ export default function LoanApplicationWizard() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-brand-ink mb-1">Email Address *</label>
+                <label className="block text-xs font-medium text-white mb-1">Email Address *</label>
                 <input
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
-                  className="w-full text-xs px-3 py-2 border border-brand-border rounded"
+                  className="w-full text-xs px-3 py-2 border border-white/[0.08] rounded"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-brand-ink mb-1">Mobile Phone *</label>
+                <label className="block text-xs font-medium text-white mb-1">Mobile Phone *</label>
                 <input
                   type="text"
                   value={formData.phone}
                   onChange={(e) => handleInputChange('phone', e.target.value)}
-                  className="w-full text-xs px-3 py-2 border border-brand-border rounded"
+                  className="w-full text-xs px-3 py-2 border border-white/[0.08] rounded"
                 />
               </div>
 
               <div className="sm:col-span-2">
-                <label className="block text-xs font-medium text-brand-ink mb-1">Current Residential Address *</label>
+                <label className="block text-xs font-medium text-white mb-1">Current Residential Address *</label>
                 <textarea
                   rows={2}
                   value={formData.currentAddress}
                   onChange={(e) => handleInputChange('currentAddress', e.target.value)}
-                  className="w-full text-xs px-3 py-2 border border-brand-border rounded"
+                  className="w-full text-xs px-3 py-2 border border-white/[0.08] rounded"
                 />
               </div>
             </div>
@@ -569,17 +573,17 @@ export default function LoanApplicationWizard() {
         {currentStep === 3 && (
           <div className="space-y-4">
             <div>
-              <h2 className="font-display font-bold text-lg text-brand-ink">Employment & Professional Profile</h2>
-              <p className="text-xs text-brand-muted mt-0.5">Captures career vintage and professional stability.</p>
+              <h2 className="font-display font-bold text-lg text-white">Employment & Professional Profile</h2>
+              <p className="text-xs text-zinc-400 mt-0.5">Captures career vintage and professional stability.</p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-brand-ink mb-1">Employment Type *</label>
+                <label className="block text-xs font-medium text-white mb-1">Employment Type *</label>
                 <select
                   value={formData.employmentType}
                   onChange={(e) => handleInputChange('employmentType', e.target.value)}
-                  className="w-full text-xs px-3 py-2 border border-brand-border rounded bg-white"
+                  className="w-full text-xs px-3 py-2 border border-white/[0.08] rounded glass-input bg-white/[0.04] text-white border-white/[0.12]"
                 >
                   <option value="salaried">Salaried Employee</option>
                   <option value="self_employed">Self-Employed Professional / Business</option>
@@ -587,32 +591,32 @@ export default function LoanApplicationWizard() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-brand-ink mb-1">Employer / Business Entity Name *</label>
+                <label className="block text-xs font-medium text-white mb-1">Employer / Business Entity Name *</label>
                 <input
                   type="text"
                   value={formData.employerName}
                   onChange={(e) => handleInputChange('employerName', e.target.value)}
-                  className="w-full text-xs px-3 py-2 border border-brand-border rounded"
+                  className="w-full text-xs px-3 py-2 border border-white/[0.08] rounded"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-brand-ink mb-1">Current Designation *</label>
+                <label className="block text-xs font-medium text-white mb-1">Current Designation *</label>
                 <input
                   type="text"
                   value={formData.designation}
                   onChange={(e) => handleInputChange('designation', e.target.value)}
-                  className="w-full text-xs px-3 py-2 border border-brand-border rounded"
+                  className="w-full text-xs px-3 py-2 border border-white/[0.08] rounded"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-brand-ink mb-1">Years in Current Job / Practice *</label>
+                <label className="block text-xs font-medium text-white mb-1">Years in Current Job / Practice *</label>
                 <input
                   type="number"
                   value={formData.yearsInJob}
                   onChange={(e) => handleInputChange('yearsInJob', Number(e.target.value))}
-                  className="w-full text-xs px-3 py-2 border border-brand-border rounded"
+                  className="w-full text-xs px-3 py-2 border border-white/[0.08] rounded"
                 />
               </div>
             </div>
@@ -623,51 +627,51 @@ export default function LoanApplicationWizard() {
         {currentStep === 4 && (
           <div className="space-y-4">
             <div>
-              <h2 className="font-display font-bold text-lg text-brand-ink">Monthly Income & Cashflow</h2>
-              <p className="text-xs text-brand-muted mt-0.5">Stated cashflow figures will be reconciled against bank statement salary credits.</p>
+              <h2 className="font-display font-bold text-lg text-white">Monthly Income & Cashflow</h2>
+              <p className="text-xs text-zinc-400 mt-0.5">Stated cashflow figures will be reconciled against bank statement salary credits.</p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-brand-ink mb-1">Gross Monthly Income (₹) *</label>
+                <label className="block text-xs font-medium text-white mb-1">Gross Monthly Income (₹) *</label>
                 <input
                   type="number"
                   value={formData.grossMonthlyIncome}
                   onChange={(e) => handleInputChange('grossMonthlyIncome', Number(e.target.value))}
-                  className="w-full text-xs px-3 py-2 border border-brand-border rounded"
+                  className="w-full text-xs px-3 py-2 border border-white/[0.08] rounded"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-brand-ink mb-1">Net In-Hand Monthly Income (₹) *</label>
+                <label className="block text-xs font-medium text-white mb-1">Net In-Hand Monthly Income (₹) *</label>
                 <input
                   type="number"
                   value={formData.netMonthlyIncome}
                   onChange={(e) => handleInputChange('netMonthlyIncome', Number(e.target.value))}
-                  className="w-full text-xs px-3 py-2 border border-brand-border rounded"
+                  className="w-full text-xs px-3 py-2 border border-white/[0.08] rounded"
                 />
-                <span className="text-[11px] text-brand-muted mt-0.5 block">
+                <span className="text-[11px] text-zinc-400 mt-0.5 block">
                   Amount: {formatINR(formData.netMonthlyIncome)} / month
                 </span>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-brand-ink mb-1">Declared Liquid Assets / Savings (₹)</label>
+                <label className="block text-xs font-medium text-white mb-1">Declared Liquid Assets / Savings (₹)</label>
                 <input
                   type="number"
                   value={formData.liquidAssets}
                   onChange={(e) => handleInputChange('liquidAssets', Number(e.target.value))}
-                  className="w-full text-xs px-3 py-2 border border-brand-border rounded"
+                  className="w-full text-xs px-3 py-2 border border-white/[0.08] rounded"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-brand-ink mb-1">Primary Salary / Inflows Bank *</label>
+                <label className="block text-xs font-medium text-white mb-1">Primary Salary / Inflows Bank *</label>
                 <input
                   type="text"
                   value={formData.primaryBank}
                   onChange={(e) => handleInputChange('primaryBank', e.target.value)}
-                  className="w-full text-xs px-3 py-2 border border-brand-border rounded"
+                  className="w-full text-xs px-3 py-2 border border-white/[0.08] rounded"
                 />
               </div>
             </div>
@@ -678,41 +682,41 @@ export default function LoanApplicationWizard() {
         {currentStep === 5 && (
           <div className="space-y-4">
             <div>
-              <h2 className="font-display font-bold text-lg text-brand-ink">Property Collateral Specifications</h2>
-              <p className="text-xs text-brand-muted mt-0.5">The primary real-estate security pledged for mortgage underwriting.</p>
+              <h2 className="font-display font-bold text-lg text-white">Property Collateral Specifications</h2>
+              <p className="text-xs text-zinc-400 mt-0.5">The primary real-estate security pledged for mortgage underwriting.</p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-brand-ink mb-1">Estimated Fair Market Value (₹) *</label>
+                <label className="block text-xs font-medium text-white mb-1">Estimated Fair Market Value (₹) *</label>
                 <input
                   type="number"
                   step="50000"
                   value={formData.estimatedMarketValue}
                   onChange={(e) => handleInputChange('estimatedMarketValue', Number(e.target.value))}
-                  className="w-full text-xs px-3 py-2 border border-brand-border rounded"
+                  className="w-full text-xs px-3 py-2 border border-white/[0.08] rounded"
                 />
-                <span className="text-[11px] text-brand-muted mt-0.5 block">
+                <span className="text-[11px] text-zinc-400 mt-0.5 block">
                   Valuation: {formatINR(formData.estimatedMarketValue)}
                 </span>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-brand-ink mb-1">Carpet Area (Square Feet) *</label>
+                <label className="block text-xs font-medium text-white mb-1">Carpet Area (Square Feet) *</label>
                 <input
                   type="number"
                   value={formData.carpetAreaSqft}
                   onChange={(e) => handleInputChange('carpetAreaSqft', Number(e.target.value))}
-                  className="w-full text-xs px-3 py-2 border border-brand-border rounded"
+                  className="w-full text-xs px-3 py-2 border border-white/[0.08] rounded"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-brand-ink mb-1">Property Category *</label>
+                <label className="block text-xs font-medium text-white mb-1">Property Category *</label>
                 <select
                   value={formData.propertyType}
                   onChange={(e) => handleInputChange('propertyType', e.target.value)}
-                  className="w-full text-xs px-3 py-2 border border-brand-border rounded bg-white"
+                  className="w-full text-xs px-3 py-2 border border-white/[0.08] rounded glass-input bg-white/[0.04] text-white border-white/[0.12]"
                 >
                   <option value="Ready Built Apartment">Ready Built Apartment</option>
                   <option value="Independent Villa / Row House">Independent Villa / Row House</option>
@@ -722,22 +726,22 @@ export default function LoanApplicationWizard() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-brand-ink mb-1">Title Type *</label>
+                <label className="block text-xs font-medium text-white mb-1">Title Type *</label>
                 <input
                   type="text"
                   value={formData.propertyTitleStatus}
                   onChange={(e) => handleInputChange('propertyTitleStatus', e.target.value)}
-                  className="w-full text-xs px-3 py-2 border border-brand-border rounded"
+                  className="w-full text-xs px-3 py-2 border border-white/[0.08] rounded"
                 />
               </div>
 
               <div className="sm:col-span-2">
-                <label className="block text-xs font-medium text-brand-ink mb-1">Property Location & Address *</label>
+                <label className="block text-xs font-medium text-white mb-1">Property Location & Address *</label>
                 <textarea
                   rows={2}
                   value={formData.propertyAddress}
                   onChange={(e) => handleInputChange('propertyAddress', e.target.value)}
-                  className="w-full text-xs px-3 py-2 border border-brand-border rounded"
+                  className="w-full text-xs px-3 py-2 border border-white/[0.08] rounded"
                 />
               </div>
             </div>
@@ -748,47 +752,47 @@ export default function LoanApplicationWizard() {
         {currentStep === 6 && (
           <div className="space-y-4">
             <div>
-              <h2 className="font-display font-bold text-lg text-brand-ink">Existing Liabilities & EMIs</h2>
-              <p className="text-xs text-brand-muted mt-0.5">Used to calculate Fixed Obligation to Income Ratio (FOIR).</p>
+              <h2 className="font-display font-bold text-lg text-white">Existing Liabilities & EMIs</h2>
+              <p className="text-xs text-zinc-400 mt-0.5">Used to calculate Fixed Obligation to Income Ratio (FOIR).</p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-brand-ink mb-1">
+                <label className="block text-xs font-medium text-white mb-1">
                   Total Existing Monthly Obligations (₹) *
                 </label>
                 <input
                   type="number"
                   value={formData.existingMonthlyObligations}
                   onChange={(e) => handleInputChange('existingMonthlyObligations', Number(e.target.value))}
-                  className="w-full text-xs px-3 py-2 border border-brand-border rounded"
+                  className="w-full text-xs px-3 py-2 border border-white/[0.08] rounded"
                 />
-                <span className="text-[11px] text-brand-muted mt-0.5 block">
+                <span className="text-[11px] text-zinc-400 mt-0.5 block">
                   Sum of running auto, personal, or educational loans.
                 </span>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-brand-ink mb-1">
+                <label className="block text-xs font-medium text-white mb-1">
                   Number of Active Tradelines / Loans
                 </label>
                 <input
                   type="number"
                   value={formData.activeLoansCount}
                   onChange={(e) => handleInputChange('activeLoansCount', Number(e.target.value))}
-                  className="w-full text-xs px-3 py-2 border border-brand-border rounded"
+                  className="w-full text-xs px-3 py-2 border border-white/[0.08] rounded"
                 />
               </div>
             </div>
 
             {/* Live FOIR preview */}
-            <div className="p-3 bg-brand-bg rounded border border-brand-border text-xs flex items-center justify-between">
+            <div className="p-3 bg-brand-bg rounded border border-white/[0.08] text-xs flex items-center justify-between">
               <div>
-                <span className="text-brand-muted block">Projected Total Monthly Debt Commitment:</span>
-                <strong className="text-brand-ink">{formatINR(formData.existingMonthlyObligations + estimatedEMI)} / month</strong>
+                <span className="text-zinc-400 block">Projected Total Monthly Debt Commitment:</span>
+                <strong className="text-white">{formatINR(formData.existingMonthlyObligations + estimatedEMI)} / month</strong>
               </div>
               <div className="text-right">
-                <span className="text-brand-muted block">Projected FOIR:</span>
+                <span className="text-zinc-400 block">Projected FOIR:</span>
                 <strong className={calculatedFOIR <= 55 ? 'text-emerald-700' : 'text-amber-700'}>
                   {calculatedFOIR}% (Limit: 55%)
                 </strong>
@@ -801,8 +805,8 @@ export default function LoanApplicationWizard() {
         {currentStep === 7 && (
           <div className="space-y-6">
             <div>
-              <h2 className="font-display font-bold text-lg text-brand-ink">Document Submission Hub</h2>
-              <p className="text-xs text-brand-muted mt-0.5">
+              <h2 className="font-display font-bold text-lg text-white">Document Submission Hub</h2>
+              <p className="text-xs text-zinc-400 mt-0.5">
                 Upload authentic, readable digital copies. Accepted formats: PDF, PNG, JPG (Max 10 MB per file).
               </p>
             </div>
@@ -820,15 +824,15 @@ export default function LoanApplicationWizard() {
               {uploadedDocs.map((doc) => (
                 <div
                   key={doc.id}
-                  className="p-3.5 rounded border border-brand-border bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-slate-300 transition-colors"
+                  className="p-3.5 rounded border border-white/[0.08] glass-input bg-white/[0.04] text-white border-white/[0.12] flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-slate-300 transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded bg-blue-50 border border-blue-200 text-brand-blue flex items-center justify-center flex-shrink-0">
+                    <div className="w-8 h-8 rounded bg-blue-50 border border-blue-200 text-orange-400 flex items-center justify-center flex-shrink-0">
                       <FileText className="w-4 h-4" />
                     </div>
                     <div>
-                      <div className="font-semibold text-xs text-brand-ink">{doc.type}</div>
-                      <div className="text-[11px] text-brand-muted flex items-center gap-2 mt-0.5">
+                      <div className="font-semibold text-xs text-white">{doc.type}</div>
+                      <div className="text-[11px] text-zinc-400 flex items-center gap-2 mt-0.5">
                         <span>{doc.fileName}</span>
                         <span>•</span>
                         <span>{doc.size}</span>
@@ -843,7 +847,7 @@ export default function LoanApplicationWizard() {
                       type="button"
                       onClick={() => triggerFileSelect(doc.id, doc.category || 'pan_card', doc.subtype || 'pan_primary')}
                       disabled={uploadingDocId === doc.id}
-                      className="text-xs px-2.5 py-1 text-brand-muted hover:text-brand-ink border border-brand-border rounded hover:bg-slate-50 transition-colors"
+                      className="text-xs px-2.5 py-1 text-zinc-400 hover:text-white border border-white/[0.08] rounded hover:bg-slate-50 transition-colors"
                     >
                       {uploadingDocId === doc.id ? 'Uploading...' : 'Upload File'}
                     </button>
@@ -862,13 +866,13 @@ export default function LoanApplicationWizard() {
             {/* Upload Dropzone */}
             <div
               onClick={() => triggerFileSelect('doc-additional', 'property_title', 'additional_doc')}
-              className="border-2 border-dashed border-brand-border rounded p-6 text-center hover:border-brand-blue transition-colors cursor-pointer bg-brand-bg/50"
+              className="border-2 border-dashed border-white/[0.08] rounded p-6 text-center hover:border-brand-blue transition-colors cursor-pointer glass-panel p-6 border-white/[0.08]"
             >
-              <Upload className="w-6 h-6 text-brand-blue mx-auto mb-2" />
-              <div className="text-xs font-semibold text-brand-ink">
+              <Upload className="w-6 h-6 text-orange-400 mx-auto mb-2" />
+              <div className="text-xs font-semibold text-white">
                 Click to attach additional supporting documents to private vault
               </div>
-              <p className="text-[11px] text-brand-muted mt-1">
+              <p className="text-[11px] text-zinc-400 mt-1">
                 Property title, municipal approvals, or ITR financials (PDF, PNG, JPG up to 15MB)
               </p>
             </div>
@@ -879,70 +883,70 @@ export default function LoanApplicationWizard() {
         {currentStep === 8 && (
           <div className="space-y-6">
             <div>
-              <h2 className="font-display font-bold text-lg text-brand-ink">Review & Digital Consent</h2>
-              <p className="text-xs text-brand-muted mt-0.5">
+              <h2 className="font-display font-bold text-lg text-white">Review & Digital Consent</h2>
+              <p className="text-xs text-zinc-400 mt-0.5">
                 Inspect your application summary before launching the automated underwriting engine.
               </p>
             </div>
 
             {/* Summary Review Grid */}
-            <div className="bg-brand-bg/60 border border-brand-border rounded p-4 space-y-4 text-xs">
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pb-3 border-b border-brand-border">
+            <div className="glass-panel p-4 border-white/[0.08] border border-white/[0.08] rounded p-4 space-y-4 text-xs">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pb-3 border-b border-white/[0.08]">
                 <div>
-                  <span className="text-brand-muted block">Loan Product</span>
-                  <span className="font-semibold text-brand-ink">{formData.loanType === 'home_loan' ? 'Home Loan' : 'LAP'}</span>
+                  <span className="text-zinc-400 block">Loan Product</span>
+                  <span className="font-semibold text-white">{formData.loanType === 'home_loan' ? 'Home Loan' : 'LAP'}</span>
                 </div>
                 <div>
-                  <span className="text-brand-muted block">Requested Loan</span>
-                  <span className="font-semibold text-brand-ink">{formatINR(formData.loanAmountRequested)}</span>
+                  <span className="text-zinc-400 block">Requested Loan</span>
+                  <span className="font-semibold text-white">{formatINR(formData.loanAmountRequested)}</span>
                 </div>
                 <div>
-                  <span className="text-brand-muted block">Property Valuation</span>
-                  <span className="font-semibold text-brand-ink">{formatINR(formData.estimatedMarketValue)}</span>
+                  <span className="text-zinc-400 block">Property Valuation</span>
+                  <span className="font-semibold text-white">{formatINR(formData.estimatedMarketValue)}</span>
                 </div>
                 <div>
-                  <span className="text-brand-muted block">Estimated LTV</span>
-                  <span className="font-semibold text-brand-blue">{calculatedLTV}%</span>
+                  <span className="text-zinc-400 block">Estimated LTV</span>
+                  <span className="font-semibold text-orange-400">{calculatedLTV}%</span>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div>
-                  <span className="text-brand-muted block">Applicant Legal Name</span>
-                  <span className="font-semibold text-brand-ink">{formData.applicantName}</span>
+                  <span className="text-zinc-400 block">Applicant Legal Name</span>
+                  <span className="font-semibold text-white">{formData.applicantName}</span>
                 </div>
                 <div>
-                  <span className="text-brand-muted block">PAN Number</span>
-                  <span className="font-mono font-semibold text-brand-ink">{formData.panNumber}</span>
+                  <span className="text-zinc-400 block">PAN Number</span>
+                  <span className="font-mono font-semibold text-white">{formData.panNumber}</span>
                 </div>
                 <div>
-                  <span className="text-brand-muted block">Net Monthly In-Hand</span>
-                  <span className="font-semibold text-brand-ink">{formatINR(formData.netMonthlyIncome)}</span>
+                  <span className="text-zinc-400 block">Net Monthly In-Hand</span>
+                  <span className="font-semibold text-white">{formatINR(formData.netMonthlyIncome)}</span>
                 </div>
                 <div>
-                  <span className="text-brand-muted block">Projected FOIR</span>
-                  <span className="font-semibold text-brand-ink">{calculatedFOIR}%</span>
+                  <span className="text-zinc-400 block">Projected FOIR</span>
+                  <span className="font-semibold text-white">{calculatedFOIR}%</span>
                 </div>
               </div>
             </div>
 
             {/* Statutory Consent Box */}
-            <div className="p-4 rounded border border-blue-200 bg-blue-50/50 space-y-3">
+            <div className="p-4 rounded border border-orange-500/30 bg-orange-500/10 space-y-3">
               <div className="flex items-start gap-3">
                 <input
                   type="checkbox"
                   id="consentCheckbox"
                   checked={formData.consentGiven}
                   onChange={(e) => handleInputChange('consentGiven', e.target.checked)}
-                  className="mt-1 w-4 h-4 text-brand-blue rounded border-slate-300 focus:ring-brand-blue"
+                  className="mt-1 w-4 h-4 text-orange-400 rounded border-slate-300 focus:ring-brand-blue"
                 />
-                <label htmlFor="consentCheckbox" className="text-xs text-brand-ink leading-relaxed">
+                <label htmlFor="consentCheckbox" className="text-xs text-white leading-relaxed">
                   <strong>Statutory Applicant Declaration & Data Processing Consent:</strong> I hereby grant explicit, revocable consent to Hero Housing Finance and its digital underwriting engine NIRNAY to fetch and verify my demographic records via DigiLocker, query credit bureau registries (CIBIL/Experian), reconcile bank statement cashflows, and run anti-money laundering (AML) screenings strictly for the purpose of credit underwriting.
                 </label>
               </div>
 
-              <div className="text-[10px] text-brand-muted flex items-center gap-2 pl-7">
-                <Shield className="w-3.5 h-3.5 text-brand-blue flex-shrink-0" />
+              <div className="text-[10px] text-zinc-400 flex items-center gap-2 pl-7">
+                <Shield className="w-3.5 h-3.5 text-orange-400 flex-shrink-0" />
                 <span>Recorded with IP address, browser signature, and cryptographic timestamp for compliance auditability.</span>
               </div>
             </div>
@@ -950,12 +954,12 @@ export default function LoanApplicationWizard() {
         )}
 
         {/* Footer Navigation Controls */}
-        <div className="mt-8 pt-5 border-t border-brand-border flex items-center justify-between">
+        <div className="mt-8 pt-5 border-t border-white/[0.08] flex items-center justify-between">
           {currentStep > 1 ? (
             <button
               type="button"
               onClick={handlePrev}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded text-xs font-medium text-brand-muted hover:text-brand-ink hover:bg-slate-100 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded text-xs font-medium text-zinc-400 hover:text-white glass-pill text-zinc-300 hover:text-white"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Back</span>
@@ -966,7 +970,7 @@ export default function LoanApplicationWizard() {
             <button
               type="button"
               onClick={handleNext}
-              className="inline-flex items-center gap-1.5 px-5 py-2 rounded text-xs font-semibold bg-brand-blue text-white hover:bg-brand-blue-hover transition-colors shadow-sm"
+              className="inline-flex items-center gap-1.5 px-5 py-2 rounded text-xs font-semibold btn-orange font-bold text-white shadow-[0_0_20px_rgba(249,115,22,0.45)]"
             >
               <span>Continue</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -975,7 +979,7 @@ export default function LoanApplicationWizard() {
             <button
               type="button"
               onClick={handleSubmitApplication}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded text-xs font-semibold bg-emerald-700 text-white hover:bg-emerald-800 transition-colors shadow-sm"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded text-xs font-semibold btn-orange font-bold text-white shadow-[0_0_25px_rgba(249,115,22,0.5)]"
             >
               <Check className="w-4 h-4" />
               <span>Submit Application for Underwriting</span>

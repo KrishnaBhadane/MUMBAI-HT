@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { supabase, isSupabaseConfigured } from '../../services/supabaseClient';
-import { ShieldCheck, ArrowRight, Lock, Mail, AlertCircle, CheckCircle2, User, KeyRound } from 'lucide-react';
+import { ShieldCheck, ArrowRight, Lock, Mail, AlertCircle, CheckCircle2, User, Sparkles } from 'lucide-react';
 
 export default function AuthPage() {
   const [searchParams] = useSearchParams();
@@ -62,7 +62,6 @@ export default function AuthPage() {
           return;
         }
 
-        // If email confirmation is disabled in Supabase, user may already have a session
         if (data?.session) {
           setSuccessMsg('Account created successfully! Redirecting to your borrower portal...');
           setTimeout(() => {
@@ -88,7 +87,6 @@ export default function AuthPage() {
           return;
         }
 
-        // Query authentic role assigned in PostgreSQL user_roles table
         const { data: roleRow } = await supabase
           .from('user_roles')
           .select('role')
@@ -115,37 +113,74 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-bg flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-[calc(100vh-8rem)] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative z-10">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        
+        {/* Institutional Branding */}
         <div className="text-center">
-          <div className="inline-flex items-center justify-center w-10 h-10 rounded bg-brand-ink text-white font-display font-bold text-lg mb-3">
+          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br from-orange-500 via-orange-600 to-amber-600 text-white font-display font-bold text-xl mb-4 shadow-[0_0_25px_rgba(249,115,22,0.5)]">
             N
           </div>
-          <h2 className="font-display font-bold text-2xl text-brand-ink">
-            {mode === 'login' ? 'Sign in to NIRNAY' : 'Create an Applicant Account'}
+          <h2 className="font-display font-bold text-3xl text-white tracking-tight">
+            {mode === 'login' ? 'Sign in to NIRNAY' : 'Create Applicant Account'}
           </h2>
-          <p className="mt-1 text-xs text-brand-muted">
+          <p className="mt-1.5 text-xs text-zinc-400 font-medium">
             Hero Housing Finance Automated Underwriting Engine
           </p>
 
-          <div className="mt-2.5 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10px] font-mono">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <div className="mt-3 inline-flex items-center gap-2 px-3 py-1 rounded-full glass-pill border border-orange-500/30 text-orange-400 text-[11px] font-mono">
+            <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-pulse shadow-[0_0_8px_#f97316]"></span>
             <span>Institutional GoTrue Authentication Active</span>
           </div>
         </div>
 
-        {/* Standard Authentication Form */}
-        <div className="mt-6 bg-white py-6 px-6 sm:px-8 border border-brand-border rounded shadow-xs">
+        {/* Frosted Glass Login Card (Modeled on User Reference Image) */}
+        <div className="mt-7 glass-card py-8 px-6 sm:px-8 rounded-3xl border border-white/[0.12] shadow-[0_20px_50px_rgba(0,0,0,0.7)] backdrop-blur-2xl">
+          
+          {/* Mode Switcher Pills */}
+          <div className="flex rounded-2xl bg-white/[0.04] p-1 border border-white/[0.08] mb-6">
+            <button
+              type="button"
+              onClick={() => {
+                setMode('login');
+                setError('');
+                setSuccessMsg('');
+              }}
+              className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
+                mode === 'login'
+                  ? 'btn-orange shadow-[0_0_15px_rgba(249,115,22,0.4)]'
+                  : 'text-zinc-400 hover:text-white'
+              }`}
+            >
+              Sign In
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setMode('register');
+                setError('');
+                setSuccessMsg('');
+              }}
+              className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
+                mode === 'register'
+                  ? 'btn-orange shadow-[0_0_15px_rgba(249,115,22,0.4)]'
+                  : 'text-zinc-400 hover:text-white'
+              }`}
+            >
+              Register
+            </button>
+          </div>
+
           {error && (
-            <div className="mb-4 p-2.5 rounded bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+            <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-xs flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 flex-shrink-0 text-red-400" />
               <span>{error}</span>
             </div>
           )}
 
           {successMsg && (
-            <div className="mb-4 p-2.5 rounded bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 flex-shrink-0" />
+            <div className="mb-4 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 flex-shrink-0 text-emerald-400" />
               <span>{successMsg}</span>
             </div>
           )}
@@ -153,7 +188,7 @@ export default function AuthPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             {mode === 'register' && (
               <div>
-                <label className="block text-xs font-medium text-brand-ink mb-1">
+                <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
                   Full Legal Name (as per PAN)
                 </label>
                 <div className="relative">
@@ -163,15 +198,15 @@ export default function AuthPage() {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="e.g. Sneha Kulkarni"
-                    className="w-full text-xs pl-9 pr-3 py-2 border border-brand-border rounded focus:outline-hidden focus:ring-1 focus:ring-brand-blue focus:border-brand-blue"
+                    className="glass-input w-full text-xs pl-10 pr-4 py-3 rounded-xl placeholder-zinc-500"
                   />
-                  <User className="w-4 h-4 text-slate-400 absolute left-2.5 top-2.5" />
+                  <User className="w-4 h-4 text-zinc-400 absolute left-3.5 top-3.5" />
                 </div>
               </div>
             )}
 
             <div>
-              <label className="block text-xs font-medium text-brand-ink mb-1">
+              <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
                 Institutional / Borrower Email
               </label>
               <div className="relative">
@@ -181,14 +216,14 @@ export default function AuthPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@example.com"
-                  className="w-full text-xs pl-9 pr-3 py-2 border border-brand-border rounded focus:outline-hidden focus:ring-1 focus:ring-brand-blue focus:border-brand-blue"
+                  className="glass-input w-full text-xs pl-10 pr-4 py-3 rounded-xl placeholder-zinc-500"
                 />
-                <Mail className="w-4 h-4 text-slate-400 absolute left-2.5 top-2.5" />
+                <Mail className="w-4 h-4 text-zinc-400 absolute left-3.5 top-3.5" />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-brand-ink mb-1">
+              <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
                 Password
               </label>
               <div className="relative">
@@ -198,71 +233,69 @@ export default function AuthPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Minimum 8 characters"
-                  className="w-full text-xs pl-9 pr-3 py-2 border border-brand-border rounded focus:outline-hidden focus:ring-1 focus:ring-brand-blue focus:border-brand-blue"
+                  className="glass-input w-full text-xs pl-10 pr-4 py-3 rounded-xl placeholder-zinc-500"
                 />
-                <Lock className="w-4 h-4 text-slate-400 absolute left-2.5 top-2.5" />
+                <Lock className="w-4 h-4 text-zinc-400 absolute left-3.5 top-3.5" />
               </div>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-2 py-2 px-4 rounded text-xs font-semibold bg-brand-blue text-white hover:bg-brand-blue-hover transition-colors shadow-xs flex items-center justify-center gap-1.5 disabled:opacity-50"
+              className="btn-orange w-full mt-2 py-3.5 px-4 rounded-xl text-xs font-bold tracking-wide flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
             >
               {loading ? (
-                <span>Authenticating with Supabase...</span>
+                <span>Authenticating with GoTrue...</span>
               ) : (
                 <>
                   <span>{mode === 'login' ? 'Sign In Securely' : 'Register Applicant Account'}</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <ArrowRight className="w-4 h-4 text-white" />
                 </>
               )}
             </button>
           </form>
 
-          <div className="mt-6 pt-4 border-t border-brand-border text-center text-xs text-brand-muted">
-            {mode === 'login' ? (
-              <span>
-                Need a new mortgage loan account?{' '}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMode('register');
-                    setError('');
-                    setSuccessMsg('');
-                  }}
-                  className="font-semibold text-brand-blue hover:underline"
-                >
-                  Register here
-                </button>
-              </span>
-            ) : (
-              <span>
-                Already registered with NIRNAY?{' '}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMode('login');
-                    setError('');
-                    setSuccessMsg('');
-                  }}
-                  className="font-semibold text-brand-blue hover:underline"
-                >
-                  Sign in
-                </button>
-              </span>
-            )}
+          {/* Quick Demo Pre-fills for Testing */}
+          <div className="mt-6 pt-5 border-t border-white/[0.08]">
+            <div className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider mb-2.5 text-center">
+              Quick Test Credentials
+            </div>
+            <div className="grid grid-cols-2 gap-2 text-[11px]">
+              <button
+                type="button"
+                onClick={() => {
+                  setMode('login');
+                  setEmail('test.applicant@nirnay.io');
+                  setPassword('ApplicantTest#2026');
+                }}
+                className="glass-pill p-2 rounded-xl text-center hover:border-orange-500/40 hover:text-orange-400 transition-all font-medium text-zinc-300"
+              >
+                Test Borrower
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setMode('login');
+                  setEmail('test.underwriter@nirnay.io');
+                  setPassword('UnderwriterTest#2026');
+                }}
+                className="glass-pill p-2 rounded-xl text-center hover:border-orange-500/40 hover:text-orange-400 transition-all font-medium text-zinc-300"
+              >
+                Test Underwriter
+              </button>
+            </div>
           </div>
         </div>
 
         {/* Security Disclaimers */}
-        <div className="mt-6 text-center text-[11px] text-slate-500 space-y-1">
-          <p className="flex items-center justify-center gap-1">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Protected by PostgreSQL Row Level Security (RLS) & DPDP Act, 2023 Consent Framework</span>
+        <div className="mt-6 text-center text-[11px] text-zinc-500 space-y-1">
+          <p className="flex items-center justify-center gap-1.5 text-zinc-400">
+            <ShieldCheck className="w-4 h-4 text-orange-400" />
+            <span>Protected by PostgreSQL Row Level Security &amp; DPDP Act, 2023</span>
           </p>
           <p>Hero Housing Finance Limited &bull; Institutional Lending Portal</p>
         </div>
+
       </div>
     </div>
   );

@@ -21,8 +21,8 @@ export default function ProtectedRoute({ children, requireStaff = false }) {
   // 1. Show loading state during session restoration
   if (authLoading) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center p-6 text-brand-muted">
-        <Loader2 className="w-8 h-8 animate-spin text-brand-blue mb-3" />
+      <div className="min-h-[60vh] flex flex-col items-center justify-center p-6 text-zinc-400">
+        <Loader2 className="w-8 h-8 animate-spin text-orange-400 mb-3" />
         <span className="text-xs font-medium">Verifying institutional credentials...</span>
       </div>
     );
@@ -43,10 +43,10 @@ export default function ProtectedRoute({ children, requireStaff = false }) {
             <ShieldAlert className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="font-display font-bold text-lg text-brand-ink">
+            <h2 className="font-display font-bold text-lg text-white">
               Institutional Access Restricted
             </h2>
-            <p className="text-xs text-brand-muted mt-1 max-w-md mx-auto">
+            <p className="text-xs text-zinc-400 mt-1 max-w-md mx-auto">
               The Underwriting & Credit Risk Workspace requires verified bank staff credentials. 
               Your active account ({currentUser.email}) is registered as a Borrower/Customer.
             </p>
